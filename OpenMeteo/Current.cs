@@ -12,7 +12,7 @@
         /// <summary>
         /// Temperature in <see cref="WeatherForecastOptions.Temperature_Unit"/>
         /// </summary>
-        public float? Temperature { get { return Temperature_2m; } private set { } } 
+        public float? Temperature => Temperature_2m;
 
         public float? Temperature_2m { get; set; }
 

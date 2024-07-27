@@ -164,16 +164,6 @@ namespace OpenMeteo
             return (response.Locations[0].Latitude, response.Locations[0].Longitude);
         }
 
-        public WeatherForecast? Query(WeatherForecastOptions options)
-        {
-            return QueryAsync(options).GetAwaiter().GetResult();
-        }
-        
-        public AirQuality? Query(AirQualityOptions options)
-        {
-            return QueryAsync(options).GetAwaiter().GetResult();
-        }
-
         private async Task<AirQuality?> GetAirQualityAsync(AirQualityOptions options)
         {
             try

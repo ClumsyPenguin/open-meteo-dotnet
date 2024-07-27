@@ -130,28 +130,5 @@ namespace OpenMeteoTests
             Assert.IsNotNull(res.Current);
             Assert.IsNotNull(res.Minutely15);
         }
-
-        [TestMethod]
-        public void WeatherForecast_With_All_Options_Sync_Test()
-        {
-            OpenMeteoClient client = new();
-            WeatherForecastOptions options = new()
-            {
-                Hourly = HourlyOptions.All,
-                Daily = DailyOptions.All,
-                Current = CurrentOptions.All,
-                Minutely15 = Minutely15Options.All,
-            };
-
-            var res = client.Query(options);
-
-            Assert.IsNotNull(res);
-            Assert.IsNotNull(res.Hourly);
-            Assert.IsNotNull(res.HourlyUnits);
-            Assert.IsNotNull(res.Daily);
-            Assert.IsNotNull(res.DailyUnits);
-            Assert.IsNotNull(res.Current);
-            Assert.IsNotNull(res.Minutely15);
-        }
     }
 }
