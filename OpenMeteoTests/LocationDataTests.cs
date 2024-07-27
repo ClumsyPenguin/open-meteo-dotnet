@@ -1,9 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using OpenMeteo;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace OpenMeteoTests
@@ -20,7 +16,7 @@ namespace OpenMeteoTests
             Assert.IsNotNull(res);
             Assert.IsNotNull(res.Locations);
 
-            Assert.AreEqual("japan", res.Locations[0].Country.ToLower());
+            Assert.AreEqual("japan", res.Locations[0].Country?.ToLower());
         }
 
         [TestMethod]
@@ -32,7 +28,7 @@ namespace OpenMeteoTests
 
             Assert.IsNotNull(res);
             Assert.IsNotNull(res.Locations);
-            Assert.AreEqual("japan", res.Locations[0].Country.ToLower());
+            Assert.AreEqual("japan", res.Locations[0].Country?.ToLower());
         }
 
         [TestMethod]

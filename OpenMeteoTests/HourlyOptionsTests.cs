@@ -22,10 +22,11 @@ namespace OpenMeteoTests
         [TestMethod]
         public void HourlyOptions_Add_Existing_Parameter_Test()
         {
-            var options = new HourlyOptions();
-
-            options.Add(HourlyOptionsParameter.soil_moisture_3_9cm);
-            options.Add(HourlyOptionsParameter.soil_moisture_3_9cm);
+            var options = new HourlyOptions
+            {
+                HourlyOptionsParameter.soil_moisture_3_9cm,
+                HourlyOptionsParameter.soil_moisture_3_9cm
+            };
 
             Assert.AreEqual(1, options.Count);
         }
@@ -61,28 +62,5 @@ namespace OpenMeteoTests
             
             Assert.AreEqual(oldCount, hourly.Count);
         }
-
-        /*[TestMethod]
-        public void HourlyOptions_ArgumentException_Test()
-        {
-            static void action() => new HourlyOptions("A not existing parameter");
-            Assert.ThrowsException<ArgumentException>(action);
-
-            static void action_array() => new HourlyOptions(new string[] { 
-                "A", "not", "existing", "Array", "of", "parameter"
-            });
-            Assert.ThrowsException<ArgumentException>(action_array);
-        }*/
-
-        /*[TestMethod]
-        public void HourlyOptionsParameter_String_To_Enum_Test()
-        {
-            string hourlyOptionsParameterString = HourlyOptions.All[0];
-            HourlyOptions options = new HourlyOptions(hourlyOptionsParameterString);
-
-            var toTest = options.HourlyOptionsStringToEnum(options[0]);
-
-            Assert.AreEqual(hourlyOptionsParameterString, toTest?.ToString());
-        }*/
     }
 }

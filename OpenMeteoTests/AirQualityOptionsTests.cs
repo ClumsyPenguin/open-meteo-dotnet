@@ -1,10 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using OpenMeteo;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace OpenMeteoTests
 {
@@ -30,10 +26,12 @@ namespace OpenMeteoTests
         [TestMethod]
         public void All_Hourly_Object_Test()
         {
-            AirQualityOptions options = new AirQualityOptions();
-            options.Hourly = AirQualityOptions.HourlyOptions.All;
+            var options = new AirQualityOptions
+            {
+                Hourly = AirQualityOptions.HourlyOptions.All
+            };
 
-            Assert.AreEqual(Enum.GetValues(typeof(AirQualityOptions.HourlyOptionsParameter)).Length, options.Hourly.Count); ;
+            Assert.AreEqual(Enum.GetValues(typeof(AirQualityOptions.HourlyOptionsParameter)).Length, options.Hourly.Count);
 
             foreach (var option in (AirQualityOptions.HourlyOptionsParameter[])Enum.GetValues(typeof(AirQualityOptions.HourlyOptionsParameter)))
             {

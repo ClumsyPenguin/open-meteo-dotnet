@@ -1,27 +1,23 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Text;
 
 namespace OpenMeteo
 {
     /// <summary>
     /// Weather models Variables (https://open-meteo.com/en/docs)
     /// </summary>
-    public class WeatherModelOptions : IEnumerable<WeatherModelOptionsParameter>, ICollection<WeatherModelOptionsParameter>
+    public class WeatherModelOptions : ICollection<WeatherModelOptionsParameter>
     {
         /// <summary>
         /// Applying every parameter. Using WeatherModelOptions.All will consume around 50mb RAM when performing API requests.
         /// </summary>
-        public static WeatherModelOptions All { get { return new WeatherModelOptions((WeatherModelOptionsParameter[])Enum.GetValues(typeof(WeatherModelOptionsParameter))); } }
+        public static WeatherModelOptions All => new WeatherModelOptions((WeatherModelOptionsParameter[])Enum.GetValues(typeof(WeatherModelOptionsParameter)));
 
         /// <summary>
         /// A copy of the current applied parameter. This is a COPY. Editing anything inside this copy won't be applied 
         /// </summary>
-        public List<WeatherModelOptionsParameter> Parameter { get { return new List<WeatherModelOptionsParameter>(_parameter); } }
+        public List<WeatherModelOptionsParameter> Parameter => new List<WeatherModelOptionsParameter>(_parameter);
 
         public int Count => _parameter.Count;
 
@@ -35,7 +31,7 @@ namespace OpenMeteo
             Add(parameter);
         }
 
-        public WeatherModelOptions(WeatherModelOptionsParameter[] parameter)
+        private WeatherModelOptions(WeatherModelOptionsParameter[] parameter)
         {
             _parameter = new List<WeatherModelOptionsParameter>();
             Add(parameter);
@@ -45,59 +41,42 @@ namespace OpenMeteo
         {
             _parameter = new List<WeatherModelOptionsParameter>();
         }
-
-        public WeatherModelOptionsParameter this[int index]
-        {
-            get { return _parameter[index]; }
-            set
-            {
-                _parameter[index] = value;
-            }
-        }
-
+        
         public void Add(WeatherModelOptionsParameter param)
         {
             // Check that the parameter isn't already added
-            if (this._parameter.Contains(param)) return;
+            if (_parameter.Contains(param)) return;
 
             _parameter.Add(param);
         }
 
-        public void Add(WeatherModelOptionsParameter[] parameters)
+        private void Add(WeatherModelOptionsParameter[] parameters)
         {
             foreach (WeatherModelOptionsParameter paramToAdd in parameters)
             {
                 Add(paramToAdd);
             }
         }
-        public IEnumerator<WeatherModelOptionsParameter> GetEnumerator()
-        {
-            return _parameter.GetEnumerator();
-        }
+        public IEnumerator<WeatherModelOptionsParameter> GetEnumerator() 
+            => _parameter.GetEnumerator();
 
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return this.GetEnumerator();
-        }
+        IEnumerator IEnumerable.GetEnumerator() 
+            => GetEnumerator();
 
         public void Clear()
         {
             _parameter.Clear();
         }
-        public bool Contains(WeatherModelOptionsParameter item)
-        {
-            return _parameter.Contains(item);
-        }
+        public bool Contains(WeatherModelOptionsParameter item) 
+            => _parameter.Contains(item);
 
         public void CopyTo(WeatherModelOptionsParameter[] array, int arrayIndex)
         {
             _parameter.CopyTo(array, arrayIndex);
         }
 
-        public bool Remove(WeatherModelOptionsParameter item)
-        {
-            return _parameter.Remove(item);
-        }
+        public bool Remove(WeatherModelOptionsParameter item) 
+            => _parameter.Remove(item);
     }
 
     public enum WeatherModelOptionsParameter

@@ -4,20 +4,20 @@ using System.Collections.Generic;
 
 namespace OpenMeteo
 {
-    public class DailyOptions : IEnumerable, ICollection<DailyOptionsParameter>
+    public class DailyOptions : ICollection<DailyOptionsParameter>
     {
         /// <summary>
         /// Gets a new object containing every parameter
         /// </summary>
         /// <returns></returns>
-        public static DailyOptions All { get { return new DailyOptions((DailyOptionsParameter[])Enum.GetValues(typeof(DailyOptionsParameter))); } }
-        
+        public static DailyOptions All => new DailyOptions((DailyOptionsParameter[])Enum.GetValues(typeof(DailyOptionsParameter)));
+
         /// <summary>
         /// Gets a copy of elements contained in the List.
         /// </summary>
         /// <typeparam name="DailyOptionsParameter"></typeparam>
         /// <returns>A copy of elements contained in the List</returns>
-        public List<DailyOptionsParameter> Parameter { get { return new List<DailyOptionsParameter>(_parameter); } }
+        public List<DailyOptionsParameter> Parameter => new List<DailyOptionsParameter>(_parameter);
 
         public int Count => _parameter.Count;
 
@@ -30,12 +30,7 @@ namespace OpenMeteo
 
         }
 
-        public DailyOptions(DailyOptionsParameter parameter)
-        {
-            Add(parameter);
-        }
-
-        public DailyOptions(DailyOptionsParameter[] parameter)
+        private DailyOptions(DailyOptionsParameter[] parameter)
         {
             Add(parameter);
         }
@@ -47,24 +42,22 @@ namespace OpenMeteo
         /// <returns><see cref="string"/> DailyOptionsType as string representation at index</returns>
         public DailyOptionsParameter this[int index]
         {
-            get { return _parameter[index]; }
-            set
-            {
-                _parameter[index] = value;
-            }
+            get => _parameter[index];
+            set => _parameter[index] = value;
         }
 
         public void Add(DailyOptionsParameter param)
         {
             // Check that the parameter isn't already added
-            if (_parameter.Contains(param)) return;
+            if (_parameter.Contains(param)) 
+                return;
 
             _parameter.Add(param);
         }
 
-        public void Add(DailyOptionsParameter[] param)
+        private void Add(DailyOptionsParameter[] param)
         {
-            foreach (DailyOptionsParameter paramToAdd in param)
+            foreach (var paramToAdd in param)
             {
                 Add(paramToAdd);
             }
@@ -75,30 +68,22 @@ namespace OpenMeteo
             _parameter.Clear();
         }
 
-        public bool Contains(DailyOptionsParameter item)
-        {
-            return _parameter.Contains(item);
-        }
+        public bool Contains(DailyOptionsParameter item) 
+            => _parameter.Contains(item);
 
-        public bool Remove(DailyOptionsParameter item)
-        {
-            return _parameter.Remove(item);
-        }
+        public bool Remove(DailyOptionsParameter item) 
+            => _parameter.Remove(item);
 
         public void CopyTo(DailyOptionsParameter[] array, int arrayIndex)
         {
             _parameter.CopyTo(array, arrayIndex);
         }
 
-        public IEnumerator<DailyOptionsParameter> GetEnumerator()
-        {
-            return _parameter.GetEnumerator();
-        }
+        public IEnumerator<DailyOptionsParameter> GetEnumerator() 
+            => _parameter.GetEnumerator();
 
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return this.GetEnumerator();
-        }
+        IEnumerator IEnumerable.GetEnumerator() 
+            => GetEnumerator();
     }
 
     public enum DailyOptionsParameter

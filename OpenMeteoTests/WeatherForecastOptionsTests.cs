@@ -39,7 +39,7 @@ namespace OpenMeteoTests
         [TestMethod]
         public void Full_WeatherForecastOptions_Constructor_Test()
         {
-            WeatherForecastOptions options = new WeatherForecastOptions(
+            var options = new WeatherForecastOptions(
                 10.5f, 20.5f, TemperatureUnitType.fahrenheit, WindspeedUnitType.kmh, PrecipitationUnitType.mm, "auto",
                 new HourlyOptions(), new DailyOptions(), new CurrentOptions(), new Minutely15Options(), TimeformatType.iso8601, 1, "", "", new WeatherModelOptions(), CellSelectionType.land);
 
@@ -63,7 +63,7 @@ namespace OpenMeteoTests
         [TestMethod]
         public void WeatherForecastOptions_Daily_Hourly_Test()
         {
-            WeatherForecastOptions options = new WeatherForecastOptions(
+            var options = new WeatherForecastOptions(
                 10.5f, 20.5f, TemperatureUnitType.fahrenheit, WindspeedUnitType.kmh, PrecipitationUnitType.mm, "auto",
                 new HourlyOptions(), new DailyOptions(), new CurrentOptions(), new Minutely15Options(), TimeformatType.iso8601, 1, "", "", new WeatherModelOptions(), CellSelectionType.land);
 

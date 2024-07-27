@@ -12,9 +12,9 @@ namespace OpenMeteoTests
         [TestMethod]
         public async Task Only_Location_Name_Test()
         {
-            OpenMeteoClient client = new OpenMeteoClient();
-            string location = "Tokyo";
-            WeatherForecast weatherData = await client.QueryAsync(location);
+            var client = new OpenMeteoClient();
+            const string location = "Tokyo";
+            var weatherData = await client.QueryAsync(location);
 
             Assert.IsNotNull(weatherData);
             Assert.IsNotNull(weatherData.Longitude);
@@ -24,9 +24,9 @@ namespace OpenMeteoTests
         [TestMethod]
         public async Task Latitude_Longitude_Test()
         {
-            OpenMeteoClient client = new OpenMeteoClient();
+            var client = new OpenMeteoClient();
             
-            WeatherForecast weatherData = await client.QueryAsync(1.125f, 2.25f);
+            var weatherData = await client.QueryAsync(1.125f, 2.25f);
 
             Assert.IsNotNull(weatherData);
             Assert.IsNotNull(weatherData.Longitude);
@@ -41,9 +41,9 @@ namespace OpenMeteoTests
         {
             Thread.CurrentThread.CurrentCulture = new CultureInfo("fr-FR");
 
-            OpenMeteoClient client = new OpenMeteoClient();
+            var client = new OpenMeteoClient();
             
-            WeatherForecast weatherData = await client.QueryAsync(1.125f, 2.25f);
+            var weatherData = await client.QueryAsync(1.125f, 2.25f);
 
             Assert.IsNotNull(weatherData);
             Assert.IsNotNull(weatherData.Longitude);
@@ -56,9 +56,9 @@ namespace OpenMeteoTests
         [TestMethod]
         public async Task GeocodingOptions_Test()
         {
-            OpenMeteoClient client = new OpenMeteoClient();
-            GeocodingOptions options = new GeocodingOptions("Tokyo");
-            WeatherForecast weatherData = await client.QueryAsync(options);
+            var client = new OpenMeteoClient();
+            var options = new GeocodingOptions("Tokyo");
+            var weatherData = await client.QueryAsync(options);
 
             Assert.IsNotNull(weatherData);
             Assert.IsNotNull(weatherData.Longitude);

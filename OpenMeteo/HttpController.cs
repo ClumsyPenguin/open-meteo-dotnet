@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Net.Http;
+﻿using System.Net.Http;
 
 namespace OpenMeteo
 {
@@ -10,17 +7,14 @@ namespace OpenMeteo
     /// </summary>
     internal class HttpController
     {
-        public HttpClient Client { get { return _httpClient; } }
-        private readonly HttpClient _httpClient;
+        public HttpClient Client { get; }
 
         public HttpController()
         {
-            _httpClient = new HttpClient();
-            _httpClient.DefaultRequestHeaders.Accept.Clear();
-            _httpClient.DefaultRequestHeaders.Accept.Add(
-                new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json")
-                );
-            _httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("om-dotnet");
+            Client = new HttpClient();
+            Client.DefaultRequestHeaders.Accept.Clear();
+            Client.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
+            Client.DefaultRequestHeaders.UserAgent.ParseAdd("om-dotnet");
 
         }
     }

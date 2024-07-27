@@ -1,24 +1,23 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Text;
 
 namespace OpenMeteo
 {
-    public class CurrentOptions : IEnumerable, ICollection<CurrentOptionsParameter>
+    public class CurrentOptions : ICollection<CurrentOptionsParameter>
     {
         /// <summary>
         /// Gets a new object containing every parameter
         /// </summary>
         /// <returns></returns>
-        public static CurrentOptions All { get { return new CurrentOptions((CurrentOptionsParameter[])Enum.GetValues(typeof(CurrentOptionsParameter))); } }
+        public static CurrentOptions All => new CurrentOptions((CurrentOptionsParameter[])Enum.GetValues(typeof(CurrentOptionsParameter)));
 
         /// <summary>
         /// Gets a copy of elements contained in the List.
         /// </summary>
         /// <typeparam name="CurrentOptionsParameter"></typeparam>
         /// <returns>A copy of elements contained in the List</returns>
-        public List<CurrentOptionsParameter> Parameter { get { return new List<CurrentOptionsParameter>(_parameter); } }
+        public List<CurrentOptionsParameter> Parameter => new List<CurrentOptionsParameter>(_parameter);
 
         public int Count => _parameter.Count;
 
@@ -31,12 +30,7 @@ namespace OpenMeteo
 
         }
 
-        public CurrentOptions(CurrentOptionsParameter parameter)
-        {
-            Add(parameter);
-        }
-
-        public CurrentOptions(CurrentOptionsParameter[] parameter)
+        private CurrentOptions(CurrentOptionsParameter[] parameter)
         {
             Add(parameter);
         }
@@ -48,11 +42,8 @@ namespace OpenMeteo
         /// <returns><see cref="string"/> CurrentOptionsType as string representation at index</returns>
         public CurrentOptionsParameter this[int index]
         {
-            get { return _parameter[index]; }
-            set
-            {
-                _parameter[index] = value;
-            }
+            get => _parameter[index];
+            set => _parameter[index] = value;
         }
 
         public void Add(CurrentOptionsParameter param)
@@ -63,7 +54,7 @@ namespace OpenMeteo
             _parameter.Add(param);
         }
 
-        public void Add(CurrentOptionsParameter[] param)
+        private void Add(CurrentOptionsParameter[] param)
         {
             foreach (CurrentOptionsParameter paramToAdd in param)
             {
@@ -76,30 +67,22 @@ namespace OpenMeteo
             _parameter.Clear();
         }
 
-        public bool Contains(CurrentOptionsParameter item)
-        {
-            return _parameter.Contains(item);
-        }
+        public bool Contains(CurrentOptionsParameter item) 
+            => _parameter.Contains(item);
 
-        public bool Remove(CurrentOptionsParameter item)
-        {
-            return _parameter.Remove(item);
-        }
+        public bool Remove(CurrentOptionsParameter item) 
+            => _parameter.Remove(item);
 
         public void CopyTo(CurrentOptionsParameter[] array, int arrayIndex)
         {
             _parameter.CopyTo(array, arrayIndex);
         }
 
-        public IEnumerator<CurrentOptionsParameter> GetEnumerator()
-        {
-            return _parameter.GetEnumerator();
-        }
+        public IEnumerator<CurrentOptionsParameter> GetEnumerator() 
+            => _parameter.GetEnumerator();
 
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return this.GetEnumerator();
-        }
+        IEnumerator IEnumerable.GetEnumerator() 
+            => GetEnumerator();
     }
 
     public enum CurrentOptionsParameter

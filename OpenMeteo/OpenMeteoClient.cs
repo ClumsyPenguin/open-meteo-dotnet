@@ -11,17 +11,17 @@ namespace OpenMeteo
     /// </summary>
     public class OpenMeteoClient
     {
-        private readonly string _weatherApiUrl = "https://api.open-meteo.com/v1/forecast";
-        private readonly string _geocodeApiUrl = "https://geocoding-api.open-meteo.com/v1/search";
-        private readonly string _airQualityApiUrl = "https://air-quality-api.open-meteo.com/v1/air-quality";
-        private readonly HttpController httpController;
+        private const string WeatherApiUrl = "https://api.open-meteo.com/v1/forecast";
+        private const string GeocodeApiUrl = "https://geocoding-api.open-meteo.com/v1/search";
+        private const string AirQualityApiUrl = "https://air-quality-api.open-meteo.com/v1/air-quality";
+        private readonly HttpController _httpController;
 
         /// <summary>
         /// Creates a new <seealso cref="OpenMeteoClient"/> object and sets the neccessary variables (httpController, CultureInfo)
         /// </summary>
         public OpenMeteoClient()
         {
-            httpController = new HttpController();
+            _httpController = new HttpController();
         }
 
         /// <summary>
@@ -31,14 +31,14 @@ namespace OpenMeteo
         /// <returns>If successful returns an awaitable Task containing WeatherForecast or NULL if request failed</returns>
         public async Task<WeatherForecast?> QueryAsync(string location)
         {
-            GeocodingOptions geocodingOptions = new GeocodingOptions(location);
+            var geocodingOptions = new GeocodingOptions(location);
 
             // Get location Information
-            GeocodingApiResponse? response = await GetGeocodingDataAsync(geocodingOptions);
-            if (response == null || response.Locations == null)
+            var response = await GetGeocodingDataAsync(geocodingOptions);
+            if (response?.Locations == null)
                 return null;
 
-            WeatherForecastOptions options = new WeatherForecastOptions
+            var options = new WeatherForecastOptions
             {
                 Latitude = response.Locations[0].Latitude,
                 Longitude = response.Locations[0].Longitude,
@@ -57,11 +57,11 @@ namespace OpenMeteo
         public async Task<WeatherForecast?> QueryAsync(GeocodingOptions options)
         {
             // Get City Information
-            GeocodingApiResponse? response = await GetLocationDataAsync(options);
-            if (response == null || response?.Locations == null)
+            var response = await GetLocationDataAsync(options);
+            if (response?.Locations == null)
                 return null;
 
-            WeatherForecastOptions weatherForecastOptions = new WeatherForecastOptions
+            var weatherForecastOptions = new WeatherForecastOptions
             {
                 Latitude = response.Locations[0].Latitude,
                 Longitude = response.Locations[0].Longitude,
@@ -97,7 +97,7 @@ namespace OpenMeteo
         /// <returns>Awaitable Task containing WeatherForecast or NULL</returns>
         public async Task<WeatherForecast?> QueryAsync(float latitude, float longitude)
         {
-            WeatherForecastOptions options = new WeatherForecastOptions
+            var options = new WeatherForecastOptions
             {
                 Latitude = latitude,
                 Longitude = longitude,
@@ -114,8 +114,8 @@ namespace OpenMeteo
         /// <returns><see cref="WeatherForecast"/> for the FIRST found result for <paramref name="location"/></returns>
         public async Task<WeatherForecast?> QueryAsync(string location, WeatherForecastOptions options)
         {
-            GeocodingApiResponse? geocodingApiResponse = await GetLocationDataAsync(location);
-            if (geocodingApiResponse == null || geocodingApiResponse?.Locations == null)
+            var geocodingApiResponse = await GetLocationDataAsync(location);
+            if (geocodingApiResponse?.Locations == null)
                 return null;
             
             options.Longitude = geocodingApiResponse.Locations[0].Longitude;
@@ -141,7 +141,7 @@ namespace OpenMeteo
         /// <returns></returns>
         public async Task<GeocodingApiResponse?> GetLocationDataAsync(string location)
         {
-            GeocodingOptions geocodingOptions = new GeocodingOptions(location);
+            var geocodingOptions = new GeocodingOptions(location);
 
             return await GetLocationDataAsync(geocodingOptions);
         }
@@ -158,8 +158,8 @@ namespace OpenMeteo
         /// <returns>(latitude, longitude) tuple of first found location or null if no location was found</returns>
         public async Task<(float latitude, float longitude)?> GetLocationLatitudeLongitudeAsync(string location)
         {
-            GeocodingApiResponse? response = await GetLocationDataAsync(location);
-            if (response == null || response?.Locations == null)
+            var response = await GetLocationDataAsync(location);
+            if (response?.Locations == null)
                 return null;
             return (response.Locations[0].Latitude, response.Locations[0].Longitude);
         }
@@ -168,27 +168,7 @@ namespace OpenMeteo
         {
             return QueryAsync(options).GetAwaiter().GetResult();
         }
-
-        public WeatherForecast? Query(float latitude, float longitude)
-        {
-            return QueryAsync(latitude, longitude).GetAwaiter().GetResult();
-        }
-
-        public WeatherForecast? Query(string location, WeatherForecastOptions options)
-        {
-            return QueryAsync(location, options).GetAwaiter().GetResult();
-        }
-
-        public WeatherForecast? Query(GeocodingOptions options)
-        {
-            return QueryAsync(options).GetAwaiter().GetResult();
-        }
-
-        public WeatherForecast? Query(string location)
-        {
-            return QueryAsync(location).GetAwaiter().GetResult();
-        }
-
+        
         public AirQuality? Query(AirQualityOptions options)
         {
             return QueryAsync(options).GetAwaiter().GetResult();
@@ -198,10 +178,10 @@ namespace OpenMeteo
         {
             try
             {
-                HttpResponseMessage response = await httpController.Client.GetAsync(MergeUrlWithOptions(_airQualityApiUrl, options));
+                var response = await _httpController.Client.GetAsync(MergeUrlWithOptions(AirQualityApiUrl, options));
                 response.EnsureSuccessStatusCode();
 
-                AirQuality? airQuality = await JsonSerializer.DeserializeAsync<AirQuality>(await response.Content.ReadAsStreamAsync(), new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
+                var airQuality = await JsonSerializer.DeserializeAsync<AirQuality>(await response.Content.ReadAsStreamAsync(), new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
                 return airQuality;
             }
             catch (HttpRequestException e)
@@ -219,77 +199,48 @@ namespace OpenMeteo
         /// <returns><see cref="string"/> Weathercode string representation</returns>
         public string WeathercodeToString(int weathercode)
         {
-            switch (weathercode)
+            return weathercode switch
             {
-                case 0:
-                    return "Clear sky";
-                case 1:
-                    return "Mainly clear";
-                case 2:
-                    return "Partly cloudy";
-                case 3:
-                    return "Overcast";
-                case 45:
-                    return "Fog";
-                case 48:
-                    return "Depositing rime Fog";
-                case 51:
-                    return "Light drizzle";
-                case 53:
-                    return "Moderate drizzle";
-                case 55:
-                    return "Dense drizzle";
-                case 56:
-                    return "Light freezing drizzle";
-                case 57:
-                    return "Dense freezing drizzle";
-                case 61:
-                    return "Slight rain";
-                case 63:
-                    return "Moderate rain";
-                case 65:
-                    return "Heavy rain";
-                case 66:
-                    return "Light freezing rain";
-                case 67:
-                    return "Heavy freezing rain";
-                case 71:
-                    return "Slight snow fall";
-                case 73:
-                    return "Moderate snow fall";
-                case 75:
-                    return "Heavy snow fall";
-                case 77:
-                    return "Snow grains";
-                case 80:
-                    return "Slight rain showers";
-                case 81:
-                    return "Moderate rain showers";
-                case 82:
-                    return "Violent rain showers";
-                case 85:
-                    return "Slight snow showers";
-                case 86:
-                    return "Heavy snow showers";
-                case 95:
-                    return "Thunderstorm";
-                case 96:
-                    return "Thunderstorm with light hail";
-                case 99:
-                    return "Thunderstorm with heavy hail";
-                default:
-                    return "Invalid weathercode";
-            }
+                0 => "Clear sky",
+                1 => "Mainly clear",
+                2 => "Partly cloudy",
+                3 => "Overcast",
+                45 => "Fog",
+                48 => "Depositing rime Fog",
+                51 => "Light drizzle",
+                53 => "Moderate drizzle",
+                55 => "Dense drizzle",
+                56 => "Light freezing drizzle",
+                57 => "Dense freezing drizzle",
+                61 => "Slight rain",
+                63 => "Moderate rain",
+                65 => "Heavy rain",
+                66 => "Light freezing rain",
+                67 => "Heavy freezing rain",
+                71 => "Slight snow fall",
+                73 => "Moderate snow fall",
+                75 => "Heavy snow fall",
+                77 => "Snow grains",
+                80 => "Slight rain showers",
+                81 => "Moderate rain showers",
+                82 => "Violent rain showers",
+                85 => "Slight snow showers",
+                86 => "Heavy snow showers",
+                95 => "Thunderstorm",
+                96 => "Thunderstorm with light hail",
+                99 => "Thunderstorm with heavy hail",
+                _ => "Invalid weathercode"
+            };
         }
 
         private async Task<WeatherForecast?> GetWeatherForecastAsync(WeatherForecastOptions options)
         {
             try
             {
-                HttpResponseMessage response = await httpController.Client.GetAsync(MergeUrlWithOptions(_weatherApiUrl, options));
+                var response = await _httpController.Client.GetAsync(MergeUrlWithOptions(WeatherApiUrl, options));
                 response.EnsureSuccessStatusCode();
 
-                WeatherForecast? weatherForecast = await JsonSerializer.DeserializeAsync<WeatherForecast>(await response.Content.ReadAsStreamAsync(), new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
+                var weatherForecast = await JsonSerializer.DeserializeAsync<WeatherForecast>(await response.Content.ReadAsStreamAsync(), new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
                 return weatherForecast;
             }
             catch (HttpRequestException e)
@@ -305,10 +256,10 @@ namespace OpenMeteo
         {
             try
             {
-                HttpResponseMessage response = await httpController.Client.GetAsync(MergeUrlWithOptions(_geocodeApiUrl, options));
+                var response = await _httpController.Client.GetAsync(MergeUrlWithOptions(GeocodeApiUrl, options));
                 response.EnsureSuccessStatusCode();
 
-                GeocodingApiResponse? geocodingData = await JsonSerializer.DeserializeAsync<GeocodingApiResponse>(await response.Content.ReadAsStreamAsync(), new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
+                var geocodingData = await JsonSerializer.DeserializeAsync<GeocodingApiResponse>(await response.Content.ReadAsStreamAsync(), new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
 
                 return geocodingData;
             }
@@ -324,8 +275,8 @@ namespace OpenMeteo
         {
             if (options == null) return url;
 
-            UriBuilder uri = new UriBuilder(url);
-            bool isFirstParam = false;
+            var uri = new UriBuilder(url);
+            var isFirstParam = false;
 
             // If no query given, add '?' to start the query string
             if (uri.Query == string.Empty)
@@ -346,13 +297,13 @@ namespace OpenMeteo
 
             uri.Query += "&longitude=" + options.Longitude.ToString(CultureInfo.InvariantCulture);
 
-            uri.Query += "&temperature_unit=" + options.Temperature_Unit.ToString();
-            uri.Query += "&windspeed_unit=" + options.Windspeed_Unit.ToString();
-            uri.Query += "&precipitation_unit=" + options.Precipitation_Unit.ToString();
+            uri.Query += "&temperature_unit=" + options.Temperature_Unit;
+            uri.Query += "&windspeed_unit=" + options.Windspeed_Unit;
+            uri.Query += "&precipitation_unit=" + options.Precipitation_Unit;
             if (options.Timezone != string.Empty)
                 uri.Query += "&timezone=" + options.Timezone;
 
-            uri.Query += "&timeformat=" + options.Timeformat.ToString();
+            uri.Query += "&timeformat=" + options.Timeformat;
 
             uri.Query += "&past_days=" + options.Past_Days;
 
@@ -366,7 +317,7 @@ namespace OpenMeteo
             // Hourly
             if (options.Hourly.Count > 0)
             {
-                bool firstHourlyElement = true;
+                var firstHourlyElement = true;
                 uri.Query += "&hourly=";
 
                 foreach (var option in options.Hourly)
@@ -378,7 +329,7 @@ namespace OpenMeteo
                     }
                     else
                     {
-                        uri.Query += "," + option.ToString();
+                        uri.Query += "," + option;
                     }
                 }
             }
@@ -386,7 +337,7 @@ namespace OpenMeteo
             // Daily
             if (options.Daily.Count > 0)
             {
-                bool firstDailyElement = true;
+                var firstDailyElement = true;
                 uri.Query += "&daily=";
                 foreach (var option in options.Daily)
                 {
@@ -397,7 +348,7 @@ namespace OpenMeteo
                     }
                     else
                     {
-                        uri.Query += "," + option.ToString();
+                        uri.Query += "," + option;
                     }
                 }
             }
@@ -409,7 +360,7 @@ namespace OpenMeteo
             // Models
             if (options.Models.Count > 0)
             {
-                bool firstModelsElement = true;
+                var firstModelsElement = true;
                 uri.Query += "&models=";
                 foreach (var option in options.Models)
                 {
@@ -420,7 +371,7 @@ namespace OpenMeteo
                     }
                     else
                     {
-                        uri.Query += "," + option.ToString();
+                        uri.Query += "," + option;
                     }
                 }
             }
@@ -428,7 +379,7 @@ namespace OpenMeteo
             // new current parameter
             if (options.Current.Count > 0)
             {
-                bool firstCurrentElement = true;
+                var firstCurrentElement = true;
                 uri.Query += "&current=";
                 foreach (var option in options.Current)
                 {
@@ -439,7 +390,7 @@ namespace OpenMeteo
                     }
                     else
                     {
-                        uri.Query += "," + option.ToString();
+                        uri.Query += "," + option;
                     }
                 }
             }
@@ -447,7 +398,7 @@ namespace OpenMeteo
             // new minutely_15 parameter
             if (options.Minutely15.Count > 0)
             {
-                bool firstMinutelyElement = true;
+                var firstMinutelyElement = true;
                 uri.Query += "&minutely_15=";
                 foreach (var option in options.Minutely15)
                 {
@@ -458,7 +409,7 @@ namespace OpenMeteo
                     }
                     else
                     {
-                        uri.Query += "," + option.ToString();
+                        uri.Query += "," + option;
                     }
                 }
             }
@@ -474,8 +425,8 @@ namespace OpenMeteo
         {
             if (options == null) return url;
 
-            UriBuilder uri = new UriBuilder(url);
-            bool isFirstParam = false;
+            var uri = new UriBuilder(url);
+            var isFirstParam = false;
 
             // If no query given, add '?' to start the query string
             if (uri.Query == string.Empty)
@@ -510,10 +461,11 @@ namespace OpenMeteo
         /// <returns>url+queryString</returns>
         private string MergeUrlWithOptions(string url, AirQualityOptions options)
         {
-            if (options == null) return url;
+            if (options is null) 
+                return url;
 
-            UriBuilder uri = new UriBuilder(url);
-            bool isFirstParam = false;
+            var uri = new UriBuilder(url);
+            var isFirstParam = false;
 
             // If no query given, add '?' to start the query string
             if (uri.Query == string.Empty)
@@ -541,23 +493,23 @@ namespace OpenMeteo
             if (options.Timezone != string.Empty)
                 uri.Query += "&timezone=" + options.Timezone;
 
+          
+            if (options.Hourly.Count < 0) 
+                return uri.ToString();
+            
             // Finally add hourly array
-            if (options.Hourly.Count >= 0)
+            var firstHourlyElement = true;
+            uri.Query += "&hourly=";
+            foreach (var option in options.Hourly)
             {
-                bool firstHourlyElement = true;
-                uri.Query += "&hourly=";
-
-                foreach (var option in options.Hourly)
+                if (firstHourlyElement)
                 {
-                    if (firstHourlyElement)
-                    {
-                        uri.Query += option.ToString();
-                        firstHourlyElement = false;
-                    }
-                    else
-                    {
-                        uri.Query += "," + option.ToString();
-                    }
+                    uri.Query += option.ToString();
+                    firstHourlyElement = false;
+                }
+                else
+                {
+                    uri.Query += "," + option;
                 }
             }
 
