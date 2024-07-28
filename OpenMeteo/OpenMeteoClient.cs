@@ -171,7 +171,7 @@ namespace OpenMeteo
                 var response = await _httpController.Client.GetAsync(MergeUrlWithOptions(AirQualityApiUrl, options));
                 response.EnsureSuccessStatusCode();
 
-                var airQuality = await JsonSerializer.DeserializeAsync<AirQuality>(await response.Content.ReadAsStreamAsync(), new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
+                var airQuality = await JsonSerializer.DeserializeAsync<AirQuality>(await response.Content.ReadAsStreamAsync(), new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
                 return airQuality;
             }
             catch (HttpRequestException e)
@@ -230,7 +230,7 @@ namespace OpenMeteo
                 var response = await _httpController.Client.GetAsync(MergeUrlWithOptions(WeatherApiUrl, options));
                 response.EnsureSuccessStatusCode();
 
-                var weatherForecast = await JsonSerializer.DeserializeAsync<WeatherForecast>(await response.Content.ReadAsStreamAsync(), new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
+                var weatherForecast = await JsonSerializer.DeserializeAsync<WeatherForecast>(await response.Content.ReadAsStreamAsync(), new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
                 return weatherForecast;
             }
             catch (HttpRequestException e)
@@ -249,7 +249,7 @@ namespace OpenMeteo
                 var response = await _httpController.Client.GetAsync(MergeUrlWithOptions(GeocodeApiUrl, options));
                 response.EnsureSuccessStatusCode();
 
-                var geocodingData = await JsonSerializer.DeserializeAsync<GeocodingApiResponse>(await response.Content.ReadAsStreamAsync(), new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
+                var geocodingData = await JsonSerializer.DeserializeAsync<GeocodingApiResponse>(await response.Content.ReadAsStreamAsync(), new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
                 return geocodingData;
             }
@@ -261,7 +261,7 @@ namespace OpenMeteo
             }
         }
 
-        private string MergeUrlWithOptions(string url, WeatherForecastOptions? options)
+        private static string MergeUrlWithOptions(string url, WeatherForecastOptions? options)
         {
             if (options == null) return url;
 
@@ -411,7 +411,7 @@ namespace OpenMeteo
         /// Combines a given url with an options object to create a url for GET requests
         /// </summary>
         /// <returns>url+queryString</returns>
-        private string MergeUrlWithOptions(string url, GeocodingOptions options)
+        private static string MergeUrlWithOptions(string url, GeocodingOptions options)
         {
             if (options == null) return url;
 
